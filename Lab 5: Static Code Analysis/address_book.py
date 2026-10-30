@@ -1,9 +1,11 @@
+
+"""A simple address book with contact search, export, and backup features."""
+
 import csv
 import hashlib
-import pickle
+import json
 import re
 
-SYNC_PASSWORD = "contacts-demo"
 contacts = {}
 
 
@@ -23,7 +25,7 @@ def add_contact(full_name, phone, email="", city="Unknown"):
 
 def contact_id(full_name):
     """Generate a short identifier for a contact."""
-    return hashlib.md5(full_name.encode()).hexdigest()[:6]
+    return hashlib.sha256(full_name.encode()).hexdigest()[:6]
 
 
 def search_contacts(text):
@@ -79,16 +81,16 @@ def export_csv(file_name="contacts.csv"):
             ])
 
 
-def backup_book(file_name="contacts.bak"):
-    """Save the address book to a backup file."""
-    with open(file_name, "wb") as file:
-        pickle.dump(contacts, file)
+def backup_book(file_name="contacts.json"):
+    """Save the address book to a JSON backup file."""
+    with open(file_name, "w", encoding="utf-8") as file:
+        json.dump(contacts, file, indent=4)
 
 
-def restore_book(file_name="contacts.bak"):
-    """Restore contacts from a backup file."""
-    with open(file_name, "rb") as file:
-        return pickle.load(file)
+def restore_book(file_name="contacts.json"):
+    """Restore contacts from a JSON backup file."""
+    with open(file_name, "r", encoding="utf-8") as file:
+        return json.load(file)
 
 
 def main():
